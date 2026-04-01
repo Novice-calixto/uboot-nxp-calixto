@@ -1,1 +1,2 @@
-# uboot-nxp-calixto
+# uboot-imx-calixto
+U-boot source code 
