@@ -1001,8 +1001,12 @@ void mxs_set_lcdclk(u32 base_addr, u32 freq)
 	/* Select to video PLL */
 	debug("%s, best_pll = %u, div = %u\n", __func__, best_pll, best_div);
 
+	//VIDEO_PLL_CLK      ==> pixel clock * 7
 	configure_fracpll(VIDEO_PLL_CLK, best_pll);
+	//MEDIA_DISP_PIX_CLK ==> pixel clock ==> 71.143MHz
 	ccm_clk_root_cfg(MEDIA_DISP_PIX_CLK_ROOT, VIDEO_PLL_CLK, best_div);
+	//MEDIA_LDB_CLK_ROOT ==> pixel clock * 7
+	ccm_clk_root_cfg(MEDIA_LDB_CLK_ROOT, VIDEO_PLL_CLK, 1);
 }
 
 /*

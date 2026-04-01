@@ -54,6 +54,11 @@ config PWM_IMX
 	help
 	  This PWM is found i.MX27 and later i.MX SoCs.
 
+config PWM_ADP5585
+	bool "Enable support for ADP5585 PWM"
+	help
+	  This PWM is found in i.MX93 EVK.
+
 config PWM_MESON
 	bool "Enable support for Amlogic Meson SoCs PWM"
 	depends on DM_PWM

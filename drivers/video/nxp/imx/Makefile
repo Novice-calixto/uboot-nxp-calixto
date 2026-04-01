@@ -16,6 +16,7 @@ obj-$(CONFIG_VIDEO_IMX_NW_DSI) += nw_dsi_imx.o
 obj-$(CONFIG_VIDEO_IMX_DW_DSI) += dw_dsi_imx.o
 obj-$(CONFIG_VIDEO_IMX_DCNANO) += dcnano.o
 obj-$(CONFIG_VIDEO_IMX93_PARALLEL_DISPLAY_FORMAT) += imx93-parallel-disp-fmt.o
+obj-$(CONFIG_VIDEO_IMX93_LVDS) += imx93_lvds.o
 obj-$(CONFIG_VIDEO_IMX95_PIXEL_LINK) += imx95-pixel-link.o
 obj-$(CONFIG_VIDEO_IMX95_PIXEL_INTERLEAVER) += imx95-pixel-interleaver.o
 obj-$(CONFIG_VIDEO_IMX95_DPU) += imx95_dpu.o

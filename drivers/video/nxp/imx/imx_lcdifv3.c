@@ -27,6 +27,7 @@
 #include <dm.h>
 #include <dm/device-internal.h>
 #include <dm/device_compat.h>
+#include <display.h>
 
 #define	PS2KHZ(ps)	(1000000000UL / (ps))
 #define HZ2PS(hz)	(1000000000UL / ((hz) / 1000))
@@ -109,9 +110,9 @@ static void lcdifv3_set_mode(struct lcdifv3_priv *priv,
 		writel(CTRL_INV_HS, (ulong)(priv->reg_base + LCDIFV3_CTRL_SET));
 
 	/* SEC MIPI DSI specific */
-	writel(CTRL_INV_PXCK, (ulong)(priv->reg_base + LCDIFV3_CTRL_CLR));
-	writel(CTRL_INV_DE, (ulong)(priv->reg_base + LCDIFV3_CTRL_CLR));
-
+	// comment CTRL_INV_DE, the default CTRL_INV_DE is DE->HIGH ACTIVE
+	// writel(CTRL_INV_PXCK, (ulong)(priv->reg_base + LCDIFV3_CTRL_CLR));
+	// writel(CTRL_INV_DE, (ulong)(priv->reg_base + LCDIFV3_CTRL_CLR));
 }
 
 static void lcdifv3_set_bus_fmt(struct lcdifv3_priv *priv)
@@ -349,28 +350,33 @@ static int lcdifv3_video_probe(struct udevice *dev)
 
 	lcdifv3_of_parse_thres(dev);
 
-	if (priv->disp_dev) {
-#if IS_ENABLED(CONFIG_VIDEO_BRIDGE)
-		if (device_get_uclass_id(priv->disp_dev) == UCLASS_VIDEO_BRIDGE) {
-			ret = video_bridge_attach(priv->disp_dev);
-			if (ret) {
-				dev_err(dev, "fail to attach bridge\n");
-				return ret;
-			}
+	// 	if (priv->disp_dev) {
+// #if IS_ENABLED(CONFIG_VIDEO_BRIDGE)
+// 		if (device_get_uclass_id(priv->disp_dev) == UCLASS_VIDEO_BRIDGE) {
+// 			ret = video_bridge_attach(priv->disp_dev);
+// 			if (ret) {
+// 				dev_err(dev, "fail to attach bridge\n");
+// 				return ret;
+// 			}
 
-			ret = video_bridge_check_timing(priv->disp_dev, &timings);
-			if (ret) {
-				dev_err(dev, "fail to check timing\n");
-				return ret;
-			}
+// 			ret = video_bridge_check_timing(priv->disp_dev, &timings);
+// 			if (ret) {
+// 				dev_err(dev, "fail to check timing\n");
+// 				return ret;
+// 			}
 
-			ret = video_bridge_set_backlight(priv->disp_dev, 80);
-			if (ret) {
-				dev_err(dev, "fail to set backlight\n");
-				return ret;
-			}
-		}
-#endif
+// 			ret = video_bridge_set_backlight(priv->disp_dev, 80);
+// 			if (ret) {
+// 				dev_err(dev, "fail to set backlight\n");
+// 				return ret;
+// 			}
+// 		}
+// #endif
+// 	}
+	ret = display_enable(priv->disp_dev, NULL, NULL);
+	if (ret) {
+		debug("%s: display enable error %d\n", __func__, ret);
+		return ret;
 	}
 
 	mode.xres = timings.hactive.typ;

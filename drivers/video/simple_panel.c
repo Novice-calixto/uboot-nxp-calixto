@@ -32,12 +32,14 @@ static const struct mipi_dsi_panel_plat panasonic_vvx10f004b00 = {
 	.lanes = 4,
 };
 
+
 static int simple_panel_enable_backlight(struct udevice *dev)
 {
 	struct simple_panel_priv *priv = dev_get_priv(dev);
 	int ret;
+	debug("%s\n", __func__);
 
-	dm_gpio_set_value(&priv->enable, 1);
+//	dm_gpio_set_value(&priv->enable, 1);
 	if (priv->backlight) {
 		debug("%s: start, backlight = '%s'\n", __func__, priv->backlight->name);
 		ret = backlight_enable(priv->backlight);
@@ -53,9 +55,10 @@ static int simple_panel_set_backlight(struct udevice *dev, int percent)
 {
 	struct simple_panel_priv *priv = dev_get_priv(dev);
 	int ret;
+	debug("%s\n", __func__);
 
 	debug("%s: start, backlight = '%s'\n", __func__, priv->backlight->name);
-	dm_gpio_set_value(&priv->enable, 1);
+//	dm_gpio_set_value(&priv->enable, 1);
 	if (priv->backlight) {
 		ret = backlight_set_brightness(priv->backlight, percent);
 		debug("%s: done, ret = %d\n", __func__, ret);
@@ -80,6 +83,8 @@ static int simple_panel_of_to_plat(struct udevice *dev)
 	struct simple_panel_priv *priv = dev_get_priv(dev);
 	int ret;
 
+	debug("%s\n", __func__);
+	
 	if (CONFIG_IS_ENABLED(DM_REGULATOR)) {
 		ret = uclass_get_device_by_phandle(UCLASS_REGULATOR, dev,
 						   "power-supply", &priv->reg);
@@ -143,6 +148,8 @@ static int simple_panel_probe(struct udevice *dev)
 	const u32 dsi_data = dev_get_driver_data(dev);
 	int ret;
 
+	debug("%s\n", __func__);
+
 	ret = regulator_set_enable_if_allowed(priv->reg, true);
 	if (ret && ret != -ENOSYS) {
 		debug("%s: failed to enable regulator '%s' %d\n",
@@ -162,7 +169,13 @@ static int simple_panel_probe(struct udevice *dev)
 
 	return 0;
 }
+static int simple_panel_get_display_timing(struct udevice *dev,
+					    struct display_timing *timings)
+{
+	memcpy(timings, &boe_ev121wxm_n10_1850_timing, sizeof(*timings));
 
+	return 0;
+}
 static const struct panel_ops simple_panel_ops = {
 	.enable_backlight	= simple_panel_enable_backlight,
 	.set_backlight		= simple_panel_set_backlight,
@@ -176,6 +189,7 @@ static const struct udevice_id simple_panel_ids[] = {
 	{ .compatible = "auo,b133htn01" },
 	{ .compatible = "boe,nv140fhmn49" },
 	{ .compatible = "lg,lb070wv8" },
+	{ .compatible = "panel-lvds" },
 	{ .compatible = "sharp,lq123p1jx31" },
 	{ .compatible = "boe,nv101wxmn51" },
 	{ .compatible = "boe,ev121wxm-n10-1850" },

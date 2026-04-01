@@ -11,7 +11,8 @@
 #include <dm.h>
 #include <dt-bindings/gpio/gpio.h>
 #include <i2c.h>
-
+#include <adp5585.h>
+struct udevice *adp5585_dev;
 #define ADP5585_ID			0x00
 #define ADP5585_INT_STATUS		0x01
 #define ADP5585_STATUS			0x02
@@ -201,6 +202,8 @@ static int adp5585_probe(struct udevice *dev)
 		return 0;
 
 	plat->addr = dev_read_addr(dev);
+
+
 	if (plat->addr == FDT_ADDR_T_NONE)
 		return -EINVAL;
 

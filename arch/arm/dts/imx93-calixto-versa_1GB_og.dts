@@ -37,70 +37,8 @@
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
 	};
-	
-	reg_vdd_12v: regulator-vdd-12v {
-		compatible = "regulator-fixed";
-		regulator-name = "reg_vdd_12v";
-		regulator-min-microvolt = <12000000>;
-		regulator-max-microvolt = <12000000>;
-		regulator-always-on;
-	};
-	
-	lvds_backlight: lvds_backlight {
-		compatible = "pwm-backlight";
-		u-boot,dm-pre-reloc;
-#		pwms = <&tpm3 3 50000 0>;
-		pwms = <&adp5585 0 100000 0>;
-		enable-gpios = <&adp5585gpio 8 GPIO_ACTIVE_HIGH>;
-		power-supply = <&reg_vdd_12v>;
-		status = "okay";
-		brightness-levels = < 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35
-					36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67
-					68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100>;
-		default-brightness-level = <80>;
-		
-	};
 
-	lvds0_panel {
-		status = "okay";
-		u-boot,dm-pre-reloc;
-		backlight = <&lvds_backlight>;
-		compatible = "panel-lvds"; 
-		data-mapping = "vesa-24";
-		enable-gpios = <&gpio2 26 GPIO_ACTIVE_HIGH>;
-		width-mm = <124>;
-		height-mm = <80>;
 
-		panel-timing {
-			clock-frequency = <25000000>;
-			hactive = <800>;
-			vactive = <480>;
-			hfront-porch = <8>;
-			hback-porch = <8>;
-			hsync-len = <4>;
-			vback-porch = <8>;
-			vfront-porch = <8>;
-			vsync-len = <4>;
-			hsync-active = <0>;
-			vsync-active = <0>;
-			de-active = <1>;
-                	pixelclk-active = <0>;
-		};
-
-		port {
-			panel_lvds_in: endpoint {
-				remote-endpoint = <&lvds_out>;
-			};
-		};
-	};	
-
-	//fake adp5585 pwm
-	adp5585: adp5585pwm@34 {
-		compatible = "adp5585pwm";
-		reg = <0x34>;
-		#pwm-cells = <3>;
-		status = "okay";
-	};
 };
 
 &mu1 {
@@ -132,37 +70,6 @@
 			eee-broken-1000t;
 		};
 	};
-};
-
-&lcdif {
-	assigned-clock-rates = <498000000>, <71142857>, <400000000>, <133333333>;
-	status = "okay";
-	u-boot,dm-pre-reloc;
-};
-
-&ldb {
-	status = "okay";
-	u-boot,dm-pre-reloc;
-	lvds-channel@0 {
-		#address-cells = <1>;
-		#size-cells = <0>;
-		fsl,data-mapping = "spwg";
-		fsl,data-width = <24>;
-		status = "okay";
-
-		port@1 {
-			reg = <1>;
-
-			lvds_out: endpoint {
-				remote-endpoint = <&panel_lvds_in>;
-			};
-		};
-	};
-};
-
-&ldb_phy {
-	status = "okay";
-	u-boot,dm-pre-reloc;
 };
 
 &lpi2c2 {
@@ -255,16 +162,6 @@
 	status = "okay";
 };
 
-&media_blk_ctrl {
-	status = "okay";
-};
-
-&tpm3 {
-      pinctrl-names = "default";
-      pinctrl-0 = <&pinctrl_tpm3>;
-      status = "okay";
-
-};
 &usbotg1 {
 	dr_mode = "otg";
 	disable-over-current;
@@ -308,13 +205,6 @@
 };
 
 &iomuxc {
-	
-	pinctrl_tpm3: tpm3grp {
-		fsl,pins = <
-		        MX93_PAD_GPIO_IO24__TPM3_CH3                    0x19e
-		        MX93_PAD_GPIO_IO26__GPIO2_IO26                  0x19e
-		>;
-	};
 
 	pinctrl_fec: fecgrp {
 		fsl,pins = <
